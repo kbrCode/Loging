@@ -62,58 +62,37 @@ class IndexController extends Zend_Controller_Action
 
         if ($this->_request->isPost()) {
             if ($form->submit->isChecked()) {
+                $captchaValid = $form->captcha->isValid($this->_request->getPost());
                 if ($form->isValid($_POST)) {
                     // pobieramy dane z formularza
-                    $data = $form->getValues();
-                    // pobieramy domyślny adapter bazy danych
-                    $db = Zend_Db_Table::getDefaultAdapter();
-                    // tworzymy instancję adaptera autoryzacji
-                    $authAdapter = new Zend_Auth_Adapter_DbTable($db, 'fx_user', 'login', 'haslo', 'email');
-                    // wprowadzamy dane do adaptera
-                    $authAdapter->setIdentity($data['login']);
-                    //$authAdapter->setCredential();
-                    //this one will be. Now removed for test purpose.
-                    //$authAdapter->setCredential(md5($data['haslo']));
-                    $authAdapter->setCredential($data['haslo']);
-//            // sprawdzamy, czy użytkownik jest aktywny
-                    $authAdapter->setCredentialTreatment("? AND aktywne = 'tak'");
-                    // autoryzacja
-                    $result = $authAdapter->authenticate();
-                    $email = 'abcde@gmail.com';
-                    if ($result->isValid()) {
-                        // umieszczamy w sesji dane użytkownika
-                        $auth = Zend_Auth::getInstance();
-                        $storage = $auth->getStorage();
-                        $storage->write($authAdapter->getResultRowObject(array(
-                                    'id', 'login', $email
-                                )));
-                        print_r($auth->getIdentity());
+            $username = $form->getValue('username');
+            $password = $form->getValue('password');
+                    
+           $authAdapter = new Application_Model_AuthUnit($username, $password, $captchaValid);
 
-                        return $this->_redirect('/');
-                    } else {
-                        $namespace = new Zend_Session_Namespace();
-                        if (isset($namespace->invalidLogins)) {
-                            $namespace->invalidLogins++;
-                        } else {
-                            $namespace->invalidLogins = 1;
-                        }
-                        $this->view->loginMessage = "Niepoprawny login lub hasło";
+            $auth = Zend_Auth::getInstance();
+
+            try
+            {
+                $result = $auth->authenticate($authAdapter);
+            }
+            catch (Exception $e) {
+                        echo 'Caught exception: ', $e->getMessage(), "\n";
                     }
+
+                if ($result->isValid()) {
+                    $identity = $authAdapter->getResultRowObject();
+                    $authstorage = $auth->getStorage();
+                    $authstorage->write($identity);
+
+                    $this->_redirect('index/index');
                 } else {
-                    if (!$form->captcha->isValid($this->_request->getPost())) {
-                        $namespace = new Zend_Session_Namespace();
-                        if (isset($namespace->invalidCaptcha)) {
-                            if($namespace->invalidCaptcha < 3){
-                            $namespace->invalidCaptcha++;
-                            }else {
-//captcha is invalid send mail
-                                }
-                            }
-                        } else {
-                            $namespace->invalidCaptcha = 1;
-                        }
-                    }
+                    $this->view->errorMessage = $result->getMessages();
                 }
+            }
+            }
+
+             return $this->_redirect('/');
             }
         $this->view->form = $form;
     }

@@ -26,7 +26,7 @@ class Application_Form_Logowanie extends Zend_Form
         ));
 
         $namespace = new Zend_Session_Namespace();
-        if (isset($namespace->invalidLogins) && $namespace->invalidLogins == 4) {
+        if (isset($namespace->showCaptcha)) {
             
             $this->addElement('captcha', 'captcha', array(
                 'label' => 'Please enter the 5 letters displayed below:',
