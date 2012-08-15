@@ -8,7 +8,7 @@ class Application_Form_Logowanie extends Zend_Form
         $this->setMethod('post');
 
         /* Form Elements & Other Definitions Here ... */
-        $this->addElement('textarea', 'login', array(
+        $this->addElement('text', 'login', array(
             'label' => 'Login:',
             'required' => true,
             'validators' => array(
@@ -24,6 +24,13 @@ class Application_Form_Logowanie extends Zend_Form
             'label' => 'Password:',
             'required' => true
         ));
+        
+//        $view = Zend_Layout::getMvcInstance()->getView();  
+//        $url = $view->url(array(  
+//            'controller' => 'index', 'action' => 'remindPassword'  
+//        ));  
+//        $this->addElement($url, 'Przypomnij hasło');
+        //$this->setAction($url);          
 
         $namespace = new Zend_Session_Namespace();
         if (isset($namespace->showCaptcha)) {

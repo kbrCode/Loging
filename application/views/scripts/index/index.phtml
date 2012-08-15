@@ -28,8 +28,7 @@
     }
 </style>
 <div id="welcome">
-    <h1>Welcome to the <span id="zf-name">Login example!</span></h1>
-    
+    <h1>Welcome to the <span id="zf-name">Zend Framework!</span></h1>
     
 <?php
   if ($this->identity == null) { ?>
@@ -37,37 +36,29 @@
     <p>Witaj samotny wędrowcze. Aby się zalogować <a href="<?php
     echo $this->url(
             array(
-        'controller' => 'Index',
+        'controller' => 'index',
         'action' => 'login'
             ), 'default', true)
     ?>">kliknij tutaj</a></p>
   <?php 
   
   } else { ?>
-<p>Witaj <strong><?php echo $this->identity->real_name; ?></strong> Znany jako: <strong><?php echo $this->identity->username; ?></strong></p>
+<p>Witaj <strong><?php echo $this->identity->login; ?></strong></p>
  <?php // print_r($this->identity);?>
 
     
     <p>Aby się wylogować <a href="<?php
     echo $this->url(
             array(
-        'controller' => 'login',
+        'controller' => 'index',
         'action' => 'logout'
             ), 'default', true)
     ?>">kliknij tutaj</a></p>
     
   <?php } ?>    
 
-    <h3>This is your project's main page and what </h3>
+<div id="welcome">
+    <h1>Welcome to the <span id="zf-name">Zend Framework!</span></h1>
 
-    <div id="more-information">
-        <p><img src="http://framework.zend.com/images/PoweredBy_ZF_4LightBG.png" /></p>
-        <p>
-            Helpful Links: <br />
-<!--            <a href="http://framework.zend.com/">Zend Framework Website</a> |
-            <a href="http://framework.zend.com/manual/en/">Zend Framework Manual</a>-->
-            <a href=guestbook>Guest Book</a> |
-            
-        </p>
-    </div>
+    <h3>This is your project's Logowanie main page</h3>
 </div>

@@ -54,19 +54,39 @@ class IndexController extends Zend_Controller_Action
         $namespace->acl = $acl;
 //                Zend_Registry::getInstance()->set('aclData', $acl);
 //                print_r(Zend_Registry::getInstance());
+        $auth = Zend_Auth::getInstance();
+//        print_r($auth);
+        if ($auth->hasIdentity()) {
+            $this->view->identity = $auth->getIdentity();
+        }        
     }
 
-    public function loginAction() {
+    public function loginAction()
+    {
         $form = new Application_Form_Logowanie();
         $form->setAction('')->setMethod('post');
 
         if ($this->_request->isPost()) {
-            if ($form->submit->isChecked()) {
-                $captchaValid = $form->captcha->isValid($this->_request->getPost());
-                if ($form->isValid($_POST)) {
+//            if ($form->submit->isChecked()) {
+                $captchaValid = TRUE;
+                $pass = true;
+        if (!$form->isValid($this->_request->getPost())){
+            //detect which one is valid
+            if($form->login->isValid($this->_request->getPost())){
+                $pass = FALSE;
+            }
+            if($form->haslo->isValid($this->_request->getPost())){
+                $pass = FALSE;
+            }
+            
+            if (isset($form->captcha)) {
+                    $captchaValid = $form->captcha->isValid($this->_request->getPost());
+                }
+            }
+            if ($pass) {
                     // pobieramy dane z formularza
-            $username = $form->getValue('username');
-            $password = $form->getValue('password');
+            $username = $form->getValue('login');
+            $password = $form->getValue('haslo');
                     
            $authAdapter = new Application_Model_AuthUnit($username, $password, $captchaValid);
 
@@ -79,18 +99,13 @@ class IndexController extends Zend_Controller_Action
             catch (Exception $e) {
                         echo 'Caught exception: ', $e->getMessage(), "\n";
                     }
-
                 if ($result->isValid()) {
-                    $identity = $authAdapter->getResultRowObject();
-                    $authstorage = $auth->getStorage();
-                    $authstorage->write($identity);
-
                     $this->_redirect('index/index');
                 } else {
                     $this->view->errorMessage = $result->getMessages();
                 }
             }
-            }
+//            }
 
              return $this->_redirect('/');
             }
@@ -104,7 +119,16 @@ class IndexController extends Zend_Controller_Action
         $auth->clearIdentity();
         return $this->_redirect('/');
     }
+
+    public function remindpasswordAction()
+    {
+        // action body
+    }
+
+
 }
+
+
 
 
 

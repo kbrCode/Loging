@@ -45,14 +45,14 @@ class Application_Model_AuthUnit implements Zend_Auth_Adapter_Interface
             unset($namespace->invalidLogins);
             unset($namespace->showCaptcha);
             unset($namespace->invalidCaptcha);
-            return new Zend_Auth_Result(Zend_Auth_Result::SUCCESS);
+            return new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, $auth->getIdentity(), array());
         } 
         else if(!$this->captchaValid)
         {
             if (isset($namespace->invalidCaptcha)) {
                 if ($namespace->invalidCaptcha == 2) {
                     //send mail to user .. locked for 20 minutes
-                    return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, "Niepoprawny captcha! Konto zostało zablokowane");
+                    return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, null, "Niepoprawny captcha! Konto zostało zablokowane");
                 } 
                 else {
                     $namespace->invalidCaptcha++;
@@ -61,7 +61,7 @@ class Application_Model_AuthUnit implements Zend_Auth_Adapter_Interface
             else {
                 $namespace->invalidCaptcha = 1;
             }
-            return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, "Niepoprawny captcha!");            
+            return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, null, "Niepoprawny captcha!");            
         }
         else {
 

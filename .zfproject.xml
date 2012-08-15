@@ -12,37 +12,18 @@
           <actionMethod actionName="index"/>
           <actionMethod actionName="login"/>
           <actionMethod actionName="logout"/>
+          <actionMethod actionName="remindPassword"/>
         </controllerFile>
         <controllerFile controllerName="Error"/>
       </controllersDirectory>
       <formsDirectory>
         <formFile formName="Logowanie"/>
       </formsDirectory>
-      <layoutsDirectory>
-        <layoutScriptsDirectory>
-          <layoutScriptFile layoutName="layout"/>
-        </layoutScriptsDirectory>
-      </layoutsDirectory>
+      <layoutsDirectory enabled="false"/>
       <modelsDirectory>
         <modelFile modelName="AuthUnit"/>
       </modelsDirectory>
-      <modulesDirectory>
-        <moduleDirectory moduleName="Auth">
-          <apisDirectory enabled="false"/>
-          <configsDirectory enabled="false"/>
-          <controllersDirectory/>
-          <formsDirectory enabled="false"/>
-          <layoutsDirectory enabled="false">
-            <layoutScriptsDirectory enabled="false"/>
-          </layoutsDirectory>
-          <modelsDirectory/>
-          <viewsDirectory>
-            <viewScriptsDirectory/>
-            <viewHelpersDirectory/>
-            <viewFiltersDirectory/>
-          </viewsDirectory>
-        </moduleDirectory>
-      </modulesDirectory>
+      <modulesDirectory enabled="false"/>
       <viewsDirectory>
         <viewScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="Index">
@@ -56,6 +37,9 @@
           </viewControllerScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="Index">
             <viewScriptFile forActionName="logout"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Index">
+            <viewScriptFile forActionName="remindPassword"/>
           </viewControllerScriptsDirectory>
         </viewScriptsDirectory>
         <viewHelpersDirectory/>
