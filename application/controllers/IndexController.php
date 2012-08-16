@@ -68,22 +68,24 @@ class IndexController extends Zend_Controller_Action
 
         if ($this->_request->isPost()) {
 //            if ($form->submit->isChecked()) {
+            $form->isValid($this->_request->getPost());
                 $captchaValid = TRUE;
                 $pass = true;
-        if (!$form->isValid($this->_request->getPost())){
-            //detect which one is valid
-            if($form->login->isValid($this->_request->getPost())){
+                $data = $form->getValues();
+                $post1 = $this->_request->getPost();
+//                $post2 = $_POST;
+
+            if(!$form->login->isValid($data['login'])){
                 $pass = FALSE;
             }
-            if($form->haslo->isValid($this->_request->getPost())){
+            if(!$form->haslo->isValid($data['haslo'])){
                 $pass = FALSE;
             }
-            
-            if (isset($form->captcha)) {
-                    $captchaValid = $form->captcha->isValid($this->_request->getPost());
+            if ($pass == TRUE && isset($form->captcha)) {
+                    $captchaValid = $form->captcha->isValid($data['captcha']);
                 }
-            }
-            if ($pass) {
+            //$pass = $form->isValid($this->_request->getPost());
+        if ($pass){
                     // pobieramy dane z formularza
             $username = $form->getValue('login');
             $password = $form->getValue('haslo');
@@ -102,12 +104,10 @@ class IndexController extends Zend_Controller_Action
                 if ($result->isValid()) {
                     $this->_redirect('index/index');
                 } else {
-                    $this->view->errorMessage = $result->getMessages();
+//                    $this->view->errorMessage = $result->getMessages();
+                    $form->setMessage($result->getMessages());
                 }
             }
-//            }
-
-             return $this->_redirect('/');
             }
         $this->view->form = $form;
     }

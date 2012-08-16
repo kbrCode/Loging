@@ -2,15 +2,34 @@
 
 class Application_Form_Logowanie extends Zend_Form
 {
+        private $message;
+        public function setMessage($message) {
+            $this->message = $message;
+        }
+
+        
     public function init()
     {
 // Set the method for the display form to POST
         $this->setMethod('post');
 
+//        if(isset($this->message)){
+//        $this->addElement('textarea', 'comment', array(
+//            'label'      => 'Logowanie nie powiodło się z następujących przyczyn:',
+//            'required'   => FALSE,
+//            'value' => $this->message,
+//            'readonly' => TRUE
+//        ));
+//            
+//        }
+            
+        
         /* Form Elements & Other Definitions Here ... */
         $this->addElement('text', 'login', array(
             'label' => 'Login:',
-            'required' => true,
+            'required' => TRUE
+            ,'filters'    => array('StringTrim')
+            ,
             'validators' => array(
                 array('validator' => 'StringLength', 'options' => array(4, 20),
                     'regex', false, array(
@@ -38,7 +57,8 @@ class Application_Form_Logowanie extends Zend_Form
             $this->addElement('captcha', 'captcha', array(
                 'label' => 'Please enter the 5 letters displayed below:',
                 'required' => true,
-                'captcha' => array(
+                'filters'  => array('StringTrim'),                
+                'captcha'  => array(
                     'captcha' => 'Figlet',
                     'wordLen' => 5,
                     'timeout' => 300
