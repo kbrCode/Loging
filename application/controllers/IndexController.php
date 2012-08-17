@@ -123,8 +123,14 @@ class IndexController extends Zend_Controller_Action
     public function remindpasswordAction()
     {
         // action body
+        $activationKey = createActivationCode();
     }
 
+    private function createActivationCode()
+    {
+        $activationKey =  mt_rand() . mt_rand() . mt_rand() . mt_rand() . mt_rand();
+        return $activationKey;
+    }
 
 }
 

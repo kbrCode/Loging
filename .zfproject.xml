@@ -22,6 +22,15 @@
       <layoutsDirectory enabled="false"/>
       <modelsDirectory>
         <modelFile modelName="AuthUnit"/>
+        <dbTableDirectory>
+          <dbTableFile dbTableName="User"/>
+          <dbTableFile dbTableName="Account"/>
+        </dbTableDirectory>
+        <modelFile modelName="UserAccountMapper"/>
+        <modelFile modelName="UserAccount"/>
+        <modelFile modelName="User"/>
+        <modelFile modelName="Account"/>
+        <modelFile modelName="DataBaseModel"/>
       </modelsDirectory>
       <modulesDirectory enabled="false"/>
       <viewsDirectory>

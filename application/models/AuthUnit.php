@@ -29,7 +29,7 @@ class Application_Model_AuthUnit implements Zend_Auth_Adapter_Interface
         //$authAdapter->setCredential(md5($data['haslo']));
         $authAdapter->setCredential($this->password);
 //            // sprawdzamy, czy użytkownik jest aktywny
-        $authAdapter->setCredentialTreatment("? AND aktywne = 'tak'");
+        $authAdapter->setCredentialTreatment("? AND aktywne = 'nie'");
         // autoryzacja
         $result = $authAdapter->authenticate();
         $this->email = 'abcde@gmail.com';
@@ -85,19 +85,20 @@ class Application_Model_AuthUnit implements Zend_Auth_Adapter_Interface
             return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, null, array("Niepoprawny captcha!"));            
         }
         else {
-
-            if (isset($namespace->invalidLogins)) {
-                if ($namespace->invalidLogins == 3) {
-                    $namespace->showCaptcha = TRUE;
-                } 
-                else {
-                    $namespace->invalidLogins++;
+            if ($result->getCode() == Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID) {
+                return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, null, array("Konto zostało zablokowane "));
+            } else {
+                if (isset($namespace->invalidLogins)) {
+                    if ($namespace->invalidLogins == 3) {
+                        $namespace->showCaptcha = TRUE;
+                    } else {
+                        $namespace->invalidLogins++;
+                    }
+                } else {
+                    $namespace->invalidLogins = 1;
                 }
-            } 
-            else {
-                $namespace->invalidLogins = 1;
+                return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, null, array("Niepoprawny login lub hasło"));
             }
-            return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, null, array("Niepoprawny login lub hasło"));            
         }
     }
 
