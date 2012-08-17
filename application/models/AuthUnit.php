@@ -34,7 +34,7 @@ class Application_Model_AuthUnit implements Zend_Auth_Adapter_Interface
         $result = $authAdapter->authenticate();
         $this->email = 'abcde@gmail.com';
         $namespace = new Zend_Session_Namespace();        
-        if ($result->isValid()) {
+        if ($this->captchaValid && $result->isValid()) {
             // umieszczamy w sesji dane użytkownika
             $auth = Zend_Auth::getInstance();
             $storage = $auth->getStorage();
@@ -52,7 +52,28 @@ class Application_Model_AuthUnit implements Zend_Auth_Adapter_Interface
             if (isset($namespace->invalidCaptcha)) {
                 if ($namespace->invalidCaptcha == 2) {
                     //send mail to user .. locked for 20 minutes
-                    return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, null, array("Niepoprawny captcha! Konto zostało zablokowane"));
+                    if ($result->getCode() != Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND) {
+
+                        $tr = new Zend_Mail_Transport_Smtp('mail.example.com', array(
+                                    'auth' => 'login',
+                                    'username' => 'kbrcode',
+                                    'password' => 'Mailpassword',
+                                    'port' => '8090'));
+
+                        Zend_Mail::setDefaultTransport($tr);
+                        $subject = 'Logowanie - problem z kontem';
+                        $bodyText = 'Drogi użytkowniku, Twoje konto zostało zablokowane na 20 minut';
+                        $from = 'logowanie@logowanie.pl ' . ' Logowanie';
+                        $to = 'john@example.com';
+                        $mail = new Zend_Mail();
+                        $mail->setBodyText($bodyText);
+                        $mail->setFrom($from, 'Logowanie');
+                        $mail->addTo($to, 'John Smith');
+                        $mail->setSubject($subject);
+                        $mail->send();
+                    }
+                    return new Zend_Auth_Result(Zend_Auth_Result::FAILURE, null, array("Niepoprawny captcha! Konto zostało zablokowane !",
+                        $from, $to, $subject, $bodyText));
                 } 
                 else {
                     $namespace->invalidCaptcha++;

@@ -7,7 +7,7 @@ class IndexController extends Zend_Controller_Action
     {
         /* Initialize action controller here */
     }
-
+//http://www.brucerick.com/changing-wamp-2-1-port-from-80-to-81-or-other-port/
     public function indexAction()
     {
         $acl = new Zend_Acl();
@@ -68,11 +68,11 @@ class IndexController extends Zend_Controller_Action
 
         if ($this->_request->isPost()) {
 //            if ($form->submit->isChecked()) {
-            $form->isValid($this->_request->getPost());
+            $formValid = $form->isValid($this->_request->getPost());
                 $captchaValid = TRUE;
                 $pass = true;
                 $data = $form->getValues();
-                $post1 = $this->_request->getPost();
+                $post1 = $this->_request->getPost('captcha');
 //                $post2 = $_POST;
 
             if(!$form->login->isValid($data['login'])){
@@ -82,9 +82,8 @@ class IndexController extends Zend_Controller_Action
                 $pass = FALSE;
             }
             if ($pass == TRUE && isset($form->captcha)) {
-                    $captchaValid = $form->captcha->isValid($data['captcha']);
+                    $captchaValid = $form->captcha->isValid($post1, $this->_request->getPost());
                 }
-            //$pass = $form->isValid($this->_request->getPost());
         if ($pass){
                     // pobieramy dane z formularza
             $username = $form->getValue('login');
@@ -105,7 +104,8 @@ class IndexController extends Zend_Controller_Action
                     $this->_redirect('index/index');
                 } else {
 //                    $this->view->errorMessage = $result->getMessages();
-                    $form->setMessage($result->getMessages());
+                    $this->view->loginMessages = $result->getMessages();
+                    //$form->setMessage($result->getMessages());
                 }
             }
             }

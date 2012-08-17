@@ -2,28 +2,11 @@
 
 class Application_Form_Logowanie extends Zend_Form
 {
-        private $message;
-        public function setMessage($message) {
-            $this->message = $message;
-        }
-
-        
     public function init()
     {
 // Set the method for the display form to POST
         $this->setMethod('post');
 
-//        if(isset($this->message)){
-//        $this->addElement('textarea', 'comment', array(
-//            'label'      => 'Logowanie nie powiodło się z następujących przyczyn:',
-//            'required'   => FALSE,
-//            'value' => $this->message,
-//            'readonly' => TRUE
-//        ));
-//            
-//        }
-            
-        
         /* Form Elements & Other Definitions Here ... */
         $this->addElement('text', 'login', array(
             'label' => 'Login:',

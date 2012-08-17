@@ -4,6 +4,12 @@
 </div>
 
 <?php
+
+  if ($this->loginMessages) {
+    foreach ($this->loginMessages as $message):
+        echo $message.'<br>';
+    endforeach;
+}
 $this->form->setAction($this->url());
 echo $this->form;
 ?>
