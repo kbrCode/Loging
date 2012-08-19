@@ -38,7 +38,7 @@ class Application_Model_UserAccountMapper
         $account = $userAccount->getAccountModel()->toArray();
  
         try {
-            $this->getDbUserTable()->beginTransaction();
+            $this->getDbUserTable()->getAdapter()->beginTransaction();
 
             $id = $this->insertUpdateTable($this->getDbUserTable(), $userData);
             $account->setFk_user_id($id);
@@ -69,7 +69,7 @@ class Application_Model_UserAccountMapper
 //left join fx_account as a1 on u1.id=a1.fk_user_id        
         $sql = $this->getDbUserTable()->getAdapter()
                 ->select()
-                ->from(array('u' => 'fx_user'))
+                ->from(array('u' => 'fx_user'), array('userId' => 'u.id', 'accountId' => 'a.id'))
                 ->joinLeft(array('a' => 'fx_account'), 'u.id=a.fk_user_id');
 
         if ($userAccount->getUserModel()->getId() != NULL) {
@@ -90,11 +90,12 @@ class Application_Model_UserAccountMapper
     {
 //SELECT u1.*, a1.* FROM fx_user as u1
 //left join fx_account as a1 on u1.id=a1.fk_user_id        
-        $sql = $this->getDbUserTable()->getAdapter()
-                ->select()
-                ->from(array('u' => 'fx_user'))
-                ->joinLeft(array('a' => 'fx_account'), 'u.id=a.fk_user_id');
+//        $sql = $this->getDbUserTable()->getAdapter()
+//                ->select()
+//                ->from(array('u' => 'fx_user'))
+//                ->joinLeft(array('a' => 'fx_account'), 'u.id=a.fk_user_id');
 
+        $sql = $this->selectBothTables();
         if (is_int($val)) {
 
             $sql->where('u.id=?', $val);
@@ -113,21 +114,38 @@ class Application_Model_UserAccountMapper
         return $userAccount;
     }
     
- 
-    public function fetchAll()
-    {
+    private function selectBothTables(){
+//SELECT u.id as userId,a.id as accountId, u.login, u.haslo, u.email, 
+//                    u.aktywne, u.role, a.fk_user_id, 
+//                    a.fk_spam_ip_id, a.data_blokady, a.data_odblokowania, a.ip_odblokowania FROM fx_user as u
+//left join fx_account as a on u.id=a.fk_user_id        
+        
         $sql = $this->getDbUserTable()->getAdapter()
                 ->select()
-                ->from(array('u' => 'fx_user'))
+                ->from(array('u' => 'fx_user'), array('userId' => 'u.id', 'accountId' => 'a.id', 
+                    'u.login', 'u.haslo', 'u.email', 
+                    'u.aktywne', 'u.role', 'a.fk_user_id', 
+                    'a.fk_spam_ip_id', 'a.data_blokady', 'a.data_odblokowania', 'a.ip_odblokowania'))
                 ->joinLeft(array('a' => 'fx_account'), 'u.id=a.fk_user_id');
+        return $sql;
+    }
 
+        public function fetchAll()
+    {
+        $sql = $this->selectBothTables();
         $resultSet = $this->getDbAccountTable()->getAdapter()->fetchAll($sql);
 
-        $entries   = array();
+        $entries = array();
         foreach ($resultSet as $row) {
             $entries[] = new Application_Model_UserAccount(new Application_Model_User($row), new Application_Model_Account($row));
         }
         return $entries;
+    }
+
+    public function deleteUser($login) {
+//$where = $table->getAdapter()->quoteInto('bug_id = ?', 1235);
+//$table->delete($where);        
+        $this->getDbUserTable()->delete(Array("login = ?" => $login));
     }
 
 }

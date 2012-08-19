@@ -21,7 +21,7 @@
         text-align: center;
     }
     
-    div#welcomeTable
+    div#welcome-table
     {
         color: #FFFFFF;
         background-image: url(http://framework.zend.com/images/bkg_header.jpg);
@@ -40,7 +40,7 @@
     }
 </style>
 
-<div id="<?php if (isset($this->entries))   { echo 'welcomeTable'; } else {echo 'welcome>';}?>">
+<div id="<?php if (isset($this->entries))   { echo 'welcome-table'; } else {echo 'welcome';}?>">
 
     <h1>Welcome to the <span id="zf-name">Zend Framework!</span></h1>
     
@@ -71,7 +71,7 @@
     
   <?php } ?>    
 
-<div id="<?php if (isset($this->entries))   { echo 'welcomeTable'; } else {echo 'welcome>';}?>">
+<div id="<?php if (isset($this->entries))   { echo 'welcome-table'; } else {echo 'welcome';}?>">
     <h3>This is your project's Logowanie main page</h3>
 
     
@@ -80,9 +80,7 @@
     <h4>Użytkownicy w systemmie</h4>    
     
 <table border="1" bordercolor="FFCC00" style="background-color:FFFFCC" width="400" cellpadding="3" cellspacing="3">
-        <?php foreach ($this->entries as $entry): ?>
 
-</dl>    
     
         <tr>
         <th>Login</th>
@@ -96,6 +94,9 @@
         <th>IP odblokowania</th>
         
         </tr>
+        
+        <?php foreach ($this->entries as $entry): ?>
+        
         <tr>
         <!--		<td><?php echo $this->escape($entry->getUserModel()->id) ?></td> -->
                     <td><?php echo $this->escape($entry->getUserModel()->login) ?></td>
@@ -115,8 +116,8 @@
     <a href="<?php echo $this->url(
     array(
         'controller' => 'index',
-        'action'     => 'delete',
-        'id'         => $entry->getUserModel()->login
+        'action'     => 'deleteuser',
+        'login'         => $entry->getUserModel()->login
     ),
     'default',
     true) ?>">Usuń użytkownika</a>
@@ -130,7 +131,7 @@
     array(
         'controller' => 'index',
         'action'     => 'lockunlock',
-        'id'         => $entry->getUserModel()->login
+        'login'         => $entry->getUserModel()->login
     ),
     'default',
     true) ?>"><?php echo $entry->getUserModel()->aktywne == 'tak' ? 'Zablokuj' : 'Odblokuj'?></a>
@@ -138,8 +139,7 @@
             <?php }
         ?>
         </tr>
-</table>        
     <?php endforeach; }?>        
-        
+</table>                
 
 </div>        

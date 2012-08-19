@@ -176,7 +176,8 @@ class IndexController extends Zend_Controller_Action
         return $activationKey;
     }
 
-    public function changepasswordAction() {
+    public function changepasswordAction()
+    {
         // action body
         $form = new Application_Form_ZmianaHasla();
         $form->setAction('')->setMethod('post');
@@ -230,17 +231,67 @@ class IndexController extends Zend_Controller_Action
                 $this->_forward('remindpassword', 'index');
                 
             } catch (Exception $exc) {
-                echo $exc->getTraceAsString();
+                    $this->echoE($exc);
             }
         } else {
             $messages = $result->getMessages();
             $messages['x'] = 'Niepoprawny link aktywacyjny. Skontaktuj się z administratorem';
             $this->view->loginMessages = $messages;
         }
+        
+    }
+
+    public function lockunlockAction()
+    {
+        // action body
+        $username = $this->_request->getParam('login');        
+        try {
+            $mapper = new Application_Model_UserAccountMapper();
+
+            $userAccount = $mapper->findByLoginOrId($username);
+            $aktywne = $userAccount->getUserModel()->getAktywne();
+            if ($aktywne == 'tak') {
+                $aktywne = 'nie';
+            } else {
+                $aktywne = 'tak';
+            }
+
+            $userAccount->getUserModel()->setAktywne($aktywne);
+            $mapper->save($userAccount);
+            $this->_redirect('index/index');
+        } catch (Exception $exc) {
+            $this->echoE($exc);
+        }
+    }
+
+    public function deleteuserAction()
+    {
+        // action body
+                $username = $this->_request->getParam('login');
+                try {
+                    $mapper = new Application_Model_UserAccountMapper();
+            $mapper->deleteUser($login);
+                } catch (Exception $exc) {
+                    $this->echoE($exc);
+        }
+    }
+    
+    private function echoE($exc){
+            echo '<pre>';
+            print_r($exc);
+            echo '</pre>';
+            echo '<pre>';
+            echo $exc->getTraceAsString();
+            echo '</pre>';
+        
     }
 
 
 }
+
+
+
+
 
 
 

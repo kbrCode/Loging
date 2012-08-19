@@ -2,6 +2,14 @@
 
 class Application_Model_Account extends Application_Model_DataBaseModel
 {
+    public function getAccountId() {
+        return $this->getId();
+    }
+
+    public function setAccountId($id) {
+        $this->setId($id);
+    }
+    
     public function getId() {
         return $this->id;
     }
