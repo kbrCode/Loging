@@ -23,7 +23,7 @@ class Application_Form_Logowanie extends Zend_Form
         ));
 
         $this->addElement('password', 'haslo', array(
-            'label' => 'Password:',
+            'label' => 'Hasło:',
             'required' => true
         ));
         

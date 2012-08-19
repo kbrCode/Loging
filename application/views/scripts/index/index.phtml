@@ -20,6 +20,18 @@
         overflow: hidden;
         text-align: center;
     }
+    
+    div#welcomeTable
+    {
+        color: #FFFFFF;
+        background-image: url(http://framework.zend.com/images/bkg_header.jpg);
+        width:  1024px;
+        height: 768px;
+        border: 2px solid #444444;
+        overflow: hidden;
+        text-align: center;
+    }
+    
 
     div#more-information
     {
@@ -27,7 +39,9 @@
         height: 100%;
     }
 </style>
-<div id="welcome">
+
+<div id="<?php if (isset($this->entries))   { echo 'welcomeTable'; } else {echo 'welcome>';}?>">
+
     <h1>Welcome to the <span id="zf-name">Zend Framework!</span></h1>
     
 <?php
@@ -57,8 +71,75 @@
     
   <?php } ?>    
 
-<div id="welcome">
-    <h1>Welcome to the <span id="zf-name">Zend Framework!</span></h1>
-
+<div id="<?php if (isset($this->entries))   { echo 'welcomeTable'; } else {echo 'welcome>';}?>">
     <h3>This is your project's Logowanie main page</h3>
-</div>
+
+    
+
+<?php if (isset($this->entries))   {?>
+    <h4>Użytkownicy w systemmie</h4>    
+    
+<table border="1" bordercolor="FFCC00" style="background-color:FFFFCC" width="400" cellpadding="3" cellspacing="3">
+        <?php foreach ($this->entries as $entry): ?>
+
+</dl>    
+    
+        <tr>
+        <th>Login</th>
+        <th>Hasło</th>
+        <th>Email</th>
+        <th>Czy aktywne</th>
+        <th>Rola</th>
+
+        <th>Data blokady</th>
+        <th>Data odblokowania</th>
+        <th>IP odblokowania</th>
+        
+        </tr>
+        <tr>
+        <!--		<td><?php echo $this->escape($entry->getUserModel()->id) ?></td> -->
+                    <td><?php echo $this->escape($entry->getUserModel()->login) ?></td>
+                    <td><?php echo $this->escape($entry->getUserModel()->haslo) ?></td>
+                    <td><?php echo $this->escape($entry->getUserModel()->email) ?></td>
+                    <td><?php echo $this->escape($entry->getUserModel()->aktywne) ?></td>
+                    <td><?php echo $this->escape($entry->getUserModel()->role) ?></td>
+
+                    <td><?php echo $this->escape($entry->getAccountModel()->data_blokady == null ? 'N/A' : $entry->getAccountModel()->data_blokady) ?></td>
+                    <td><?php echo $this->escape($entry->getAccountModel()->data_odblokowania == null ? 'N/A' : $entry->getAccountModel()-> data_odblokowania) ?></td>
+                    <td><?php echo $this->escape($entry->getAccountModel()->ip_odblokowania == null ? 'N/A' : $entry->getAccountModel()->ip_odblokowania) ?></td>
+                    
+                    
+    <?php if ($this->acl->isAllowed($this->identity->role, null, 'deleteUser')) {?>
+            <td>
+           
+    <a href="<?php echo $this->url(
+    array(
+        'controller' => 'index',
+        'action'     => 'delete',
+        'id'         => $entry->getUserModel()->login
+    ),
+    'default',
+    true) ?>">Usuń użytkownika</a>
+            </td>
+
+            <?php }?>
+        
+    <?php if ($this->acl->isAllowed($this->identity->role, null, 'lockUnlockUser')) {?>
+        <td>
+    <a href="<?php echo $this->url(
+    array(
+        'controller' => 'index',
+        'action'     => 'lockunlock',
+        'id'         => $entry->getUserModel()->login
+    ),
+    'default',
+    true) ?>"><?php echo $entry->getUserModel()->aktywne == 'tak' ? 'Zablokuj' : 'Odblokuj'?></a>
+        </td>
+            <?php }
+        ?>
+        </tr>
+</table>        
+    <?php endforeach; }?>        
+        
+
+</div>        

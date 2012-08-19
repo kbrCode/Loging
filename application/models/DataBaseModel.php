@@ -13,7 +13,7 @@ class Application_Model_DataBaseModel
     {
         $method = 'set' . $name;
         if (('mapper' == $name) || !method_exists($this, $method)) {
-            throw new Exception('Invalid guestbook property');
+            throw new Exception('Invalid '.get_class($this).' property');
         }
         $this->$method($value);
     }
@@ -22,7 +22,7 @@ class Application_Model_DataBaseModel
     {
         $method = 'get' . $name;
         if (('mapper' == $name) || !method_exists($this, $method)) {
-            throw new Exception('Invalid guestbook property');
+            throw new Exception('Invalid '.get_class($this).' property');
         }
         return $this->$method();
     }

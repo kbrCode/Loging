@@ -13,11 +13,15 @@
           <actionMethod actionName="login"/>
           <actionMethod actionName="logout"/>
           <actionMethod actionName="remindPassword"/>
+          <actionMethod actionName="changepassword"/>
+          <actionMethod actionName="activationlogin"/>
         </controllerFile>
         <controllerFile controllerName="Error"/>
       </controllersDirectory>
       <formsDirectory>
         <formFile formName="Logowanie"/>
+        <formFile formName="PrzypomnienieHasla"/>
+        <formFile formName="ZmianaHasla"/>
       </formsDirectory>
       <layoutsDirectory enabled="false"/>
       <modelsDirectory>
@@ -31,6 +35,7 @@
         <modelFile modelName="User"/>
         <modelFile modelName="Account"/>
         <modelFile modelName="DataBaseModel"/>
+        <modelFile modelName="MailManagement"/>
       </modelsDirectory>
       <modulesDirectory enabled="false"/>
       <viewsDirectory>
@@ -49,6 +54,12 @@
           </viewControllerScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="Index">
             <viewScriptFile forActionName="remindPassword"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Index">
+            <viewScriptFile forActionName="changepassword"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Index">
+            <viewScriptFile forActionName="activationlogin"/>
           </viewControllerScriptsDirectory>
         </viewScriptsDirectory>
         <viewHelpersDirectory/>

@@ -22,14 +22,14 @@ class Application_Model_UserAccount
     protected $accountModel;
     
     public function __construct($userModel = null, $accountModel = null) {
-        if ($this->userModel == NULL) {
+        if ($userModel == NULL) {
             $this->userModel = new Application_Model_User();
         } else {
             $this->userModel = $userModel;
         }
 
-        if ($this->accountModel == NULL) {
-            $this->accountModel = Application_Model_Account();
+        if ($accountModel == NULL) {
+            $this->accountModel = new Application_Model_Account();
         } else {
             $this->accountModel = $accountModel;
         }

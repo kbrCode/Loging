@@ -1,4 +1,23 @@
 <br /><br />
 <div id="view-content">
 	<p>View script for controller <b>Index</b> and script/action name <b>logout</b></p>
+        <p><b>Zostałeś wylogowany</b></p>
 </div>
+
+    <p><a href="<?php
+    echo $this->url(
+            array(
+        'controller' => 'index',
+        'action' => 'index'
+            ), 'default', true)
+    ?>">Główna strona</a></p>
+    <br>
+    <p><a href="<?php
+    echo $this->url(
+            array(
+        'controller' => 'index',
+        'action' => 'login'
+            ), 'default', true)
+    ?>">Aby się zalogować kliknij tutaj</a></p>
+
+    

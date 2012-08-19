@@ -1,6 +1,6 @@
 <?php
 
-class Application_Model_User extends DataBaseModel
+class Application_Model_User extends Application_Model_DataBaseModel
 {
     public function getId() {
         return $this->id;
@@ -41,6 +41,14 @@ class Application_Model_User extends DataBaseModel
     public function setAktywne($aktywne) {
         $this->aktywne = $aktywne;
     }
+    
+    public function getRole() {
+        return $this->role;
+    }
+
+    public function setRole($role) {
+        $this->role = $role;
+    }
 
     //fx_user
     protected $id;
@@ -48,5 +56,6 @@ class Application_Model_User extends DataBaseModel
     protected $haslo;
     protected $email;
     protected $aktywne;    
+    protected $role;
 }
 
