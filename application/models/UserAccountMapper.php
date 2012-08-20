@@ -27,7 +27,7 @@ class Application_Model_UserAccountMapper
     public function getDbAccountTable()
     {
         if (null === $this->_dbAccountTable) {
-            $this->_dbAccountTable = $this->setDbTable('Application_Model_DbTable_User');
+            $this->_dbAccountTable = $this->setDbTable('Application_Model_DbTable_Account');
         }
         return $this->_dbAccountTable;
     }
@@ -35,13 +35,13 @@ class Application_Model_UserAccountMapper
     public function save(Application_Model_UserAccount $userAccount)
     {
         $userData = $userAccount->getUserModel()->toArray();
-        $account = $userAccount->getAccountModel()->toArray();
- 
+
         try {
             $this->getDbUserTable()->getAdapter()->beginTransaction();
 
             $id = $this->insertUpdateTable($this->getDbUserTable(), $userData);
-            $account->setFk_user_id($id);
+            $userAccount->getAccountModel()->setFk_user_id($id);
+            $account = $userAccount->getAccountModel()->toArray();            
             $this->insertUpdateTable($this->getDbAccountTable(), $account);            
             
             $this->_dbUserTable->getAdapter()->commit();
@@ -56,22 +56,20 @@ class Application_Model_UserAccountMapper
 
         if (null === ($id = $data['id'])) {
             unset($data['id']);
-            $table->getAdapter()->insert($data);
+            $table->insert($data);
+            $id = $table->getAdapter()->lastInsertId();            
         } else {
-            $table->getAdapter()->update($data, array('id = ?' => $id));
+            $table->update($data, array('id = ?' => $id));
         }
-        return $table->getAdapter()->lastInsertId();
+        return $id;        
+
     }
 
     public function find(Application_Model_UserAccount $userAccount)
     {
 //SELECT u1.*, a1.* FROM fx_user as u1
 //left join fx_account as a1 on u1.id=a1.fk_user_id        
-        $sql = $this->getDbUserTable()->getAdapter()
-                ->select()
-                ->from(array('u' => 'fx_user'), array('userId' => 'u.id', 'accountId' => 'a.id'))
-                ->joinLeft(array('a' => 'fx_account'), 'u.id=a.fk_user_id');
-
+        $sql = $this->selectBothTables();
         if ($userAccount->getUserModel()->getId() != NULL) {
 
             $sql->where('u.id=?', $userAccount->getUserModel()->getId());
@@ -107,9 +105,9 @@ class Application_Model_UserAccountMapper
         if ($select == 0) {
             throw new Exception('Nie ma takiego użytkownika ' . $val);
         }
-        $userAccount = new Application_Model_UserAccount();
-        $userAccount->setUserModel(new Application_Model_User($select));
-        $userAccount->setAccountModel(new Application_Model_Account($select));
+        $userAccount = new Application_Model_UserAccount(
+                new Application_Model_User($select), 
+                new Application_Model_Account($select));
 
         return $userAccount;
     }

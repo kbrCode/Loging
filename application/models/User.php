@@ -2,7 +2,7 @@
 
 class Application_Model_User extends Application_Model_DataBaseModel
 {
-    public function getUserId() {
+    private function getUserId() {
         return $this->getId();
     }
 
@@ -14,7 +14,7 @@ class Application_Model_User extends Application_Model_DataBaseModel
         return $this->id;
     }
 
-    public function setId($id) {
+    private function setId($id) {
         $this->id = $id;
     }
 

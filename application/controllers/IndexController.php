@@ -250,13 +250,18 @@ class IndexController extends Zend_Controller_Action
 
             $userAccount = $mapper->findByLoginOrId($username);
             $aktywne = $userAccount->getUserModel()->getAktywne();
+            $mysqldate = gmdate('Y-m-d H:i:s',time());            
+            $ip = $this->getRequest()->getClientIp(TRUE); 
             if ($aktywne == 'tak') {
                 $aktywne = 'nie';
+                $userAccount->getAccountModel()->setData_blokady($mysqldate);
             } else {
                 $aktywne = 'tak';
+                $userAccount->getAccountModel()->setIp_odblokowania($ip);
+                $userAccount->getAccountModel()->setData_odblokowania($mysqldate);
             }
-
             $userAccount->getUserModel()->setAktywne($aktywne);
+
             $mapper->save($userAccount);
             $this->_redirect('index/index');
         } catch (Exception $exc) {
@@ -267,15 +272,15 @@ class IndexController extends Zend_Controller_Action
     public function deleteuserAction()
     {
         // action body
-                $username = $this->_request->getParam('login');
-                try {
-                    $mapper = new Application_Model_UserAccountMapper();
-            $mapper->deleteUser($login);
-                } catch (Exception $exc) {
-                    $this->echoE($exc);
+        $username = $this->_request->getParam('login');
+        try {
+            $mapper = new Application_Model_UserAccountMapper();
+            $mapper->deleteUser($username);
+        } catch (Exception $exc) {
+            $this->echoE($exc);
         }
     }
-    
+
     private function echoE($exc){
             echo '<pre>';
             print_r($exc);
