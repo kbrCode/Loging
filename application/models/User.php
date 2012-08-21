@@ -2,9 +2,9 @@
 
 class Application_Model_User extends Application_Model_DataBaseModel
 {
-    private function getUserId() {
-        return $this->getId();
-    }
+//    private function getUserId() {
+//        return $this->getId();
+//    }
 
     public function setUserId($id) {
         $this->setId($id);

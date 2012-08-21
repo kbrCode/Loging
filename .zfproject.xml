@@ -31,6 +31,7 @@
         <dbTableDirectory>
           <dbTableFile dbTableName="User"/>
           <dbTableFile dbTableName="Account"/>
+          <dbTableFile dbTableName="SpamIp"/>
         </dbTableDirectory>
         <modelFile modelName="UserAccountMapper"/>
         <modelFile modelName="UserAccount"/>
@@ -38,6 +39,7 @@
         <modelFile modelName="Account"/>
         <modelFile modelName="DataBaseModel"/>
         <modelFile modelName="MailManagement"/>
+        <modelFile modelName="SpamIP"/>
       </modelsDirectory>
       <modulesDirectory enabled="false"/>
       <viewsDirectory>

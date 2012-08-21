@@ -27,7 +27,7 @@ class IndexController extends Zend_Controller_Action
 
 // Editor inherits view, edit, submit, and revise privileges from
 // staff, but also needs additional privileges
-        $acl->allow('member', null, array('seeUsersList', 'addUser', 'deleteUser', 'lockUnlockUser'));
+        //$acl->allow('member', null, array('seeUsersList', 'addUser', 'deleteUser', 'lockUnlockUser'));
 
 // Administrator inherits nothing, but is allowed all privileges
         $acl->allow('admin');
@@ -212,7 +212,6 @@ class IndexController extends Zend_Controller_Action
         $username = $this->_request->getParam('login');
         $password = $this->_request->getParam('Activation');
         $authAdapter = new Application_Model_AuthUnit($username, $password);
-        $authAdapter->setNoCreditenitalTreatment();
         $auth = Zend_Auth::getInstance();
 
         try {

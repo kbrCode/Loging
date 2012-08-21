@@ -2,9 +2,9 @@
 
 class Application_Model_Account extends Application_Model_DataBaseModel
 {
-    private function getAccountId() {
-        return $this->getId();
-    }
+//    private function getAccountId() {
+//        return $this->getId();
+//    }
 
     public function setAccountId($id) {
         $this->setId($id);
@@ -58,13 +58,13 @@ class Application_Model_Account extends Application_Model_DataBaseModel
         $this->ip_odblokowania = $ip_odblokowania;
     }
 
-    public function getKod_odblokowania() {
-        return $this->kod_odblokowania;
-    }
-
-    public function setKod_odblokowania($kod_odblokowania) {
-        $this->kod_odblokowania = $kod_odblokowania;
-    }
+//    public function getKod_odblokowania() {
+//        return $this->kod_odblokowania;
+//    }
+//
+//    public function setKod_odblokowania($kod_odblokowania) {
+//        $this->kod_odblokowania = $kod_odblokowania;
+//    }
 
     //fx_account
     protected $id;
@@ -73,6 +73,6 @@ class Application_Model_Account extends Application_Model_DataBaseModel
     protected $data_blokady;
     protected $data_odblokowania;
     protected $ip_odblokowania;
-    protected $kod_odblokowania;
+//    protected $kod_odblokowania;
 }
 
