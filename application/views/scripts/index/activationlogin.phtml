@@ -1,8 +1,9 @@
 <br /><br />
 <div id="view-content">
 	<p>View script for controller <b>Index</b> and script/action name <b>activationlogin</b></p>
-        Proszę czekać. Za chwilę nastąpi przekierowanie do strony zmiany hasła.
+        
 </div>
+
 <?php
 
   if ($this->loginMessages) {
@@ -10,3 +11,11 @@
         echo $message.'<br>';
     endforeach;
 }
+?>
+    <p><a href="<?php
+    echo $this->url(
+            array(
+        'controller' => 'index',
+        'action' => 'index'
+            ), 'default', true)
+    ?>">Główna strona</a></p>

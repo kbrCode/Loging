@@ -49,7 +49,7 @@ class IndexController extends Zend_Controller_Action
 
 // Administrator does not inherit access controls
         $acl->addRole(new Zend_Acl_Role('administrator'), $admin);
-
+        
         $namespace = new Zend_Session_Namespace();
         $namespace->acl = $acl;
         $this->view->acl = $namespace->acl;        
@@ -126,8 +126,7 @@ class IndexController extends Zend_Controller_Action
         return $this->_redirect('/');
     }
 
-    public function remindpasswordAction()
-    {
+    public function remindpasswordAction() {
         $form = new Application_Form_PrzypomnienieHasla();
         $form->setAction('')->setMethod('post');
 
@@ -135,44 +134,31 @@ class IndexController extends Zend_Controller_Action
 //            if ($form->submit->isChecked()) {
             if ($form->isValid($this->_request->getPost())) {
                 $username = $form->getValue('login');
+                $mapper = new Application_Model_UserAccountMapper();
+                $userAccount = $mapper->findByLoginOrId($username);
 
-                try {
-                    $activationCode = $this->createActivationCode();
-
-                    $mapper = new Application_Model_UserAccountMapper();
-                    $userAccount = $mapper->findByLoginOrId($username);
-                    $userAccount->getUserModel()->setHaslo($activationCode);
+                if ($userAccount->getUserModel()->getAktywne() == 'tak') {
+                    $this->activateUser($userAccount);
                     $mapper->save($userAccount);
-
-                    $url = $this->view->url(
-                            array(
-                        'controller' => 'index',
-                        'action' => 'activationlogin',
-                        'login' => $username,
-                        'Activation' => $activationCode
-                            ), 'default', true);
-
-                    $this->view->notifications = Application_Model_MailManagement::getInstance()->sendMail($userAccount->getUserModel()->getEmail(), Application_Model_MailManagement::INFO_TYPE_REMIND, $url);
-                    $this->view->loginMessages = array('Mail z linkiem aktywacyjnym został wysłany');
-                } catch (Exception $exc) {
-                    $this->view->loginMessages = array($exc->getMessage());
+                } else {
+                    if ($userAccount->getUserModel()->getAktywne() == 'temp') {
+                        $messages = array("Konto zostało zablokowane do " .
+                            $userAccount->getAccountModel()->getData_blokady() .
+                            " Proszę spróbować później.");
+                    } else {
+                        $messages = array("Konto zostało zablokowane. Proszę skontaktować się z administratorem");
+                    }
+                    $this->view->loginMessages = $messages;
                 }
             }
-//                    $this->_redirect('index/index');
-//                } else {
-////                    $this->view->errorMessage = $result->getMessages();
-//                    $this->view->loginMessages = $result->getMessages();
-//                    //$form->setMessage($result->getMessages());
-//                }
-//            }
-            }
+        }
         $this->view->form = $form;
-
     }
 
     private function createActivationCode()
     {
         $activationKey =  mt_rand() . mt_rand() . mt_rand() . mt_rand() . mt_rand();
+        $activationKey =  substr($activationKey, 0, 32);
         return $activationKey;
     }
 
@@ -187,7 +173,7 @@ class IndexController extends Zend_Controller_Action
             if ($form->isValid($this->_request->getPost())) {
                 $auth = Zend_Auth::getInstance();
 
-                $username = $auth->getIdentity();
+                $username = $auth->getIdentity()->login;
                 $password = $form->getValue('haslo');
                 $mapper = new Application_Model_UserAccountMapper();
 
@@ -227,17 +213,20 @@ class IndexController extends Zend_Controller_Action
 
                 $userAccount->getUserModel()->setAktywne('tak');
                 $mapper->save($userAccount);
-                $this->_forward('remindpassword', 'index');
+                $this->_redirect('index/changepassword');
                 
             } catch (Exception $exc) {
                     $this->echoE($exc);
             }
         } else {
-            $messages = $result->getMessages();
-            $messages['x'] = 'Niepoprawny link aktywacyjny. Skontaktuj się z administratorem';
+            if ($result->getAdditionalCode() == Application_Model_LoginResult::FAILURE_ACCOUNT_LOCKED) {
+                $messages = $result->getMessages();
+            } else {
+                $messages = array('Niepoprawny link aktywacyjny. Spróbuj jeszcze raz');
+            }
             $this->view->loginMessages = $messages;
+            //$this->_redirect('index/remindpassword');
         }
-        
     }
 
     public function lockunlockAction()
@@ -258,6 +247,7 @@ class IndexController extends Zend_Controller_Action
                 $aktywne = 'tak';
                 $userAccount->getAccountModel()->setIp_odblokowania($ip);
                 $userAccount->getAccountModel()->setData_odblokowania($mysqldate);
+                $this->activateUser($userAccount);
             }
             $userAccount->getUserModel()->setAktywne($aktywne);
 
@@ -265,6 +255,26 @@ class IndexController extends Zend_Controller_Action
             $this->_redirect('index/index');
         } catch (Exception $exc) {
             $this->echoE($exc);
+        }
+    }
+    
+    private function activateUser($userAccount) {
+        try {
+            $activationCode = $this->createActivationCode();
+            $userAccount->getUserModel()->setHaslo($activationCode);
+
+            $url = $this->view->url(
+                    array(
+                'controller' => 'index',
+                'action' => 'activationlogin',
+                'login' => $userAccount->getUserModel()->getLogin(),
+                'Activation' => $activationCode
+                    ), 'default', true);
+
+            $this->view->notifications = Application_Model_MailManagement::getInstance()->sendMail($userAccount->getUserModel()->getEmail(), Application_Model_MailManagement::INFO_TYPE_REMIND, $url);
+            $this->view->loginMessages = array('Mail z linkiem aktywacyjnym został wysłany');
+        } catch (Exception $exc) {
+            $this->view->loginMessages = array($exc->getMessage());
         }
     }
 
@@ -278,6 +288,7 @@ class IndexController extends Zend_Controller_Action
         } catch (Exception $exc) {
             $this->echoE($exc);
         }
+        $this->_redirect('index/index');        
     }
 
     private function echoE($exc){

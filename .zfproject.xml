@@ -40,6 +40,7 @@
         <modelFile modelName="DataBaseModel"/>
         <modelFile modelName="MailManagement"/>
         <modelFile modelName="SpamIP"/>
+        <modelFile modelName="LoginResult"/>
       </modelsDirectory>
       <modulesDirectory enabled="false"/>
       <viewsDirectory>
